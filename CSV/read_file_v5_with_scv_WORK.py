@@ -1,8 +1,11 @@
 import csv
+from itertools import count
 import os
 import pathlib
 import platform
 
+keys = []
+count_searched = 0
 
 def clear_screen():
     if platform.system() == "Windows":
@@ -19,20 +22,12 @@ FILE_NAME = "MOCK_DATA.csv"
 path_to_file = pathlib.Path(__file__).parent.joinpath(FILE_NAME)
 
 # get keys for the scv file
-keys = []
 with open(path_to_file, newline="") as file:
     keys = next(csv.reader(file))
     pass
 
-# set spacer
-
-
-def set_spacer(name):
-    return "\t\t" if len(name) <= 9 else "\t"
-    pass
 
 # print function
-
 
 def print_customer(customer):
     print(f"""
@@ -59,21 +54,24 @@ key = d1[key]
 print(f"key: {key}")
 
 
-# read file to dictionary
-customers_dictionary = {}
+# read file to list of dictionaries
+customers_list = []
 with open(path_to_file, newline="") as file:
     scv_reader = csv.DictReader(file, delimiter=",")
     for row in scv_reader:
-        customers_dictionary[row[key]] = row
+        customers_list.append(row)
         pass
     pass
-print(type(customers_dictionary), len(customers_dictionary))
+
 clear_screen()
 text = input(f"search by {key}: ")
-print_customer(customers_dictionary[text])
+
 # print all finded customers
 
-for customer in customers_dictionary:
-    if text in customer:
-        print_customer(customers_dictionary[customer])
+for customer in customers_list:
+    if text in customer[key]:
+        count_searched += 1
+        print_customer(customer)
     pass
+
+print(f"total found: {count_searched} customers\n")
